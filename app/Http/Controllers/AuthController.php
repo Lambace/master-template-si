@@ -22,9 +22,24 @@ class AuthController extends Controller
         if (Auth::attempt($kredensial, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard'));
+            $user = auth()->user();
+            $namaRole = $user->role->nama_role ?? 'Unknown';
+
+            // Cek Role secara eksplisit untuk mencegah jebakan logika
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            } elseif ($namaRole === 'Pimpinan') {
+                return redirect()->route('pimpinan.dashboard');
+            }
+
+            // Fallback Keamanan: Jika role tidak dikenali, paksa logout dan tolak
+            Auth::logout();
+            return back()->withErrors([
+                'email' => 'Akun Anda tidak memiliki hak akses ke dashboard manapun.',
+            ]);
         }
 
+        // Jika password/email salah
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
