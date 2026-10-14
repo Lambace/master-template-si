@@ -13,13 +13,21 @@
     
     <style>
         [x-cloak] { display: none !important; }
+        
+        /* Tambahan CSS khusus agar hasil cetak PDF lebih rapi seperti skripsi */
+        @media print {
+            body { background: white !important; }
+            table { border-collapse: collapse !important; }
+            table th, table td { border: 1px solid black !important; padding: 8px !important; }
+        }
     </style>
 </head>
 <body class="bg-gray-100">
-    <div class="flex h-screen overflow-hidden">
+    {{-- Wrapper utama: saat dicetak, ubah jadi block dan hilangkan overflow hidden --}}
+    <div class="flex h-screen overflow-hidden print:block print:h-auto print:overflow-visible">
         
-        <!-- Sidebar -->
-        <aside class="w-64 bg-gray-800 text-white flex flex-col">
+        <!-- Sidebar: sembunyikan saat dicetak -->
+        <aside class="w-64 bg-gray-800 text-white flex flex-col print:hidden">
             <!-- Logo/Brand -->
             <div class="p-4 border-b border-gray-700">
                 <h1 class="text-xl font-bold">Master Template SI</h1>
@@ -36,6 +44,13 @@
                         <span>Dashboard</span>
                     </a>
                     
+                    {{-- Menu Baru: Perhitungan SAW --}}
+                    <a href="{{ route('admin.spk.hasil') }}" 
+                       class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-700 {{ request()->routeIs('admin.spk.*') ? 'bg-gray-700' : '' }}">
+                        <i class="fas fa-calculator"></i>
+                        <span>Perhitungan SAW</span>
+                    </a>
+
                     <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-700">
                         <i class="fas fa-users"></i>
                         <span>Manajemen User</span>
@@ -81,16 +96,16 @@
         </aside>
         
         <!-- Main Content -->
-        <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top Navbar -->
-            <header class="bg-white shadow-sm">
+        <div class="flex-1 flex flex-col overflow-hidden print:overflow-visible">
+            <!-- Top Navbar: sembunyikan saat dicetak -->
+            <header class="bg-white shadow-sm print:hidden">
                 <div class="px-6 py-4">
                     <h2 class="text-2xl font-bold text-gray-800">@yield('page-title', 'Dashboard')</h2>
                 </div>
             </header>
             
-            <!-- Content Area -->
-            <main class="flex-1 overflow-y-auto p-6">
+            <!-- Content Area: hilangkan padding saat dicetak agar margin kertas maksimal --}}
+            <main class="flex-1 overflow-y-auto p-6 print:p-0 print:overflow-visible">
                 @yield('content')
             </main>
         </div>
