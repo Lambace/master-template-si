@@ -18,6 +18,12 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
+
+    Route::get('/admin/spk/uji-coba', function () {
+    $hasil = app(\App\Services\PerhitunganSAW::class)->hitung();
+
+    return response()->json($hasil, 200, [], JSON_PRETTY_PRINT);
+    })->name('admin.spk.uji');
 });
 
 // Ruangan Khusus PIMPINAN
